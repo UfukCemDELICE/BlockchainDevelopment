@@ -1,12 +1,27 @@
 use blockchainlib::*;
 fn main () {
-    let mut block = Block::new(0, 0, vec![0; 32], 0, "Genesis Block".to_owned(), 0x00000000ffffffffffffffffffffffffff);
-
-    block.hash = block.hash();
-
-    println!("{:?}", &block);
+    let difficulty = 0x000fffffffffffffffffffffffffffff;
+    let mut block = Block::new(0, now(), vec![0; 32], 0, "Genesis
+    Block".to_owned(), difficulty );
 
     block.mine();
     
-    println!("{:?}", &block);
+    println!("Mined genesis block {:?}", &block);
+    let mut last_hash = block.hash.clone();
+
+    let mut blockchain = Blockchain{
+        blocks: vec![block],
+    };
+
+    println!("Verifying blockchain: {}", blockchain.verify());
+
+    for i in 1..= 10{
+        let mut block = Block::new(i, now(), last_hash, 0, "Another
+        Block".to_owned(), difficulty );
+        block.mine();
+        println!("Mined block {:?}", &block);
+        last_hash = block.hash.clone();
+        blockchain.blocks.push(block);
+        println!("Verifying blockchain: {}", blockchain.verify());
+    }
 }
